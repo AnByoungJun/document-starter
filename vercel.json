@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/generate.js": {
+      "maxDuration": 60
+    },
+    "api/transcribe.js": {
+      "maxDuration": 60
+    },
+    "api/monday.js": {
+      "maxDuration": 30
+    },
+    "api/blob-upload.js": {
+      "maxDuration": 30
+    }
+  }
+}

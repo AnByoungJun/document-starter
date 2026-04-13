@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply antialiased text-gray-900;
+    font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* prose 스타일 오버라이드 */
+.prose h1 { @apply text-xl font-bold text-gray-900 mt-6 mb-3; }
+.prose h2 { @apply text-base font-bold text-gray-800 mt-5 mb-2; }
+.prose h3 { @apply text-sm font-semibold text-gray-700 mt-4 mb-1; }
+.prose p  { @apply text-sm text-gray-700 leading-relaxed my-2; }
+.prose ul { @apply space-y-1.5 my-2 pl-1; }
+.prose li { @apply text-sm text-gray-700; }
+.prose hr { @apply border-gray-200 my-4; }
+.prose strong { @apply font-semibold text-gray-900; }
