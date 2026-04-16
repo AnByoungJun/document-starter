@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { streamGemini } from '../lib/geminiClient';
 
 export function useDocumentGenerator() {
   const [output, setOutputState] = useState('');
@@ -8,7 +9,9 @@ export function useDocumentGenerator() {
   const startTimeRef = useRef(null);
   const abortControllerRef = useRef(null);
 
-  const generate = useCallback(async (documentType, fields, aiProvider = 'groq') => {
+  const generate = useCallback(async (documentType, fields, options = {}) => {
+    const { aiProvider = 'groq', geminiKey = '', geminiModel = 'gemini-2.5-flash' } = options;
+
     // 이전 요청 취소
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -20,6 +23,28 @@ export function useDocumentGenerator() {
     setIsLoading(true);
     setGenerationMs(null);
     startTimeRef.current = Date.now();
+
+    // Gemini 분기: 사용자 키로 브라우저에서 직접 호출
+    if (aiProvider === 'gemini' && geminiKey) {
+      try {
+        await streamGemini({
+          documentType,
+          fields,
+          apiKey: geminiKey,
+          model: geminiModel,
+          signal: abortControllerRef.current.signal,
+          onText: (text) => setOutputState((prev) => prev + text),
+        });
+        setGenerationMs(Date.now() - startTimeRef.current);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          setError(err.message || 'Gemini 호출 중 오류가 발생했습니다.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
 
     try {
       const response = await fetch('/api/generate', {
